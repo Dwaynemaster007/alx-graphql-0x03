@@ -16,19 +16,22 @@ interface State {
       this.state = { hasError: false };
     }
   
-    static getDerivedStateFromError(error: Error): State {
+    static getDerivedStateFromError(): State {
       return { hasError: true };
     }
   
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-      Sentry.captureException(error, { extra: errorInfo });
+      Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
     }
     render() {
       if (this.state.hasError) {
         return (
-          <div>
-            <h2>Oops, there is an error!</h2>
-            <button onClick={() => this.setState({ hasError: false })}>
+          <div className="p-6">
+            <h2 className="text-2xl font-semibold">Oops, there is an error!</h2>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 bg-[#45B69C] text-white py-2 px-6 rounded-lg"
+            >
               Try again?
             </button>
           </div>
